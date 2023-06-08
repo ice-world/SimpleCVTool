@@ -57,6 +57,7 @@ def zoom_out():
 def on_canvas_click(event):
     canvas.start_drag_x = event.x
     canvas.start_drag_y = event.y
+    update_status_bar(event.x, event.y)
 
 
 def on_canvas_drag(event):
@@ -67,13 +68,27 @@ def on_canvas_drag(event):
     canvas.move("image", delta_x, delta_y)
     canvas.start_drag_x = event.x
     canvas.start_drag_y = event.y
+    update_status_bar(event.x, event.y)
 
+def on_canvas_move(event):
+    update_status_bar(event.x, event.y)
 
 def processWheel(event):
     if event.delta > 0:
         zoom_in()  # 滚轮往上滚动，放大
     else:
         zoom_out()  # 滚轮往下滚动，缩小
+
+def update_status_bar(x, y):
+    if Va.img_cv is not None:
+        height, width, _ = Va.img_cv.shape
+        if Va.curX <= x < width + Va.curX and Va.curY <= y < height + Va.curY:
+            color = Va.img_cv[y -Va.curY, x - Va.curX]
+            status_bar.config(text=f"位置：({x - Va.curX}, {y - Va.curY}) 颜色：(BGR) {color}")
+        else:
+            status_bar.config(text="鼠标在画布外")
+    else:
+        status_bar.config(text="没有打开图片")
 
 
 if __name__ == "__main__":
@@ -87,9 +102,14 @@ if __name__ == "__main__":
     canvas.bind("<ButtonPress-1>", on_canvas_click)
     canvas.bind("<B1-Motion>", on_canvas_drag)
     canvas.bind("<MouseWheel>", processWheel)
+    canvas.bind("<Motion>", on_canvas_move)
 
     menu = tk.Menu(root)
     root.config(menu=menu)
+
+    status_bar = tk.Label(root, text="准备", bd=1, relief=tk.SUNKEN, anchor=tk.W)
+    status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
 
     file_menu = tk.Menu(menu)
     menu.add_cascade(label="文件", menu=file_menu)
