@@ -1,59 +1,56 @@
-import tkinter as tk
-from tkinter import filedialog
+#import tkinter as tk
+#from tkinter import filedialog
 from PIL import Image, ImageTk
 import cv2
-from tkinter import messagebox
+#from tkinter import messagebox
+import values as Va
+from windows import *
+from binarize_image import binarize_image
 
 def open_image():
-    global curX,curY    #记录当前位置，使放大缩小后位置不变
-    curX = 0
-    curY = 0
+    Va.curX = 0
+    Va.curY = 0
     file_path = filedialog.askopenfilename()
     if file_path:
-        global img, img_cv, img_tk
-        img_cv = cv2.imread(file_path)
-        img = Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
-        img_tk = ImageTk.PhotoImage(img)
-        canvas.create_image(0, 0, anchor=tk.NW, image=img_tk, tags="image")
+        Va.img_cv = cv2.imread(file_path)
+        Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
+        Va.img_tk = ImageTk.PhotoImage(Va.img)
+        canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
 
 
 def zoom_in():
-    global img, img_cv, img_tk
-    global curX, curY
-    img_cv = cv2.resize(img_cv, None, fx=1.05, fy=1.05, interpolation=cv2.INTER_AREA)
-    img = Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
-    img_tk = ImageTk.PhotoImage(img)
+    Va.img_cv = cv2.resize(Va.img_cv, None, fx=1.05, fy=1.05, interpolation=cv2.INTER_AREA)
+    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
+    Va.img_tk = ImageTk.PhotoImage(Va.img)
     canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=img_tk, tags="image")
-    canvas.move("image", curX, curY)    #移动到当前位置，使放大缩小后位置不变
+    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
+    canvas.move("image", Va.curX, Va.curY)  # 移动到当前位置，使放大缩小后位置不变
 
 
 def zoom_out():
-    global img, img_cv, img_tk
-    global curX, curY
-    img_cv = cv2.resize(img_cv, None, fx=0.95, fy=0.95, interpolation=cv2.INTER_AREA)
-    img = Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
-    img_tk = ImageTk.PhotoImage(img)
+    Va.img_cv = cv2.resize(Va.img_cv, None, fx=0.95, fy=0.95, interpolation=cv2.INTER_AREA)
+    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
+    Va.img_tk = ImageTk.PhotoImage(Va.img)
     canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=img_tk, tags="image")
-    canvas.move("image", curX, curY)
+    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
+    canvas.move("image", Va.curX, Va.curY)
 
-
+'''
 def binarize_image(threshold):
-    global img, img_cv,img_tk
-    if img_cv is None:
+    global Va.img, Va.img_cv, Va.img_tk
+    if Va.img_cv is None:
         messagebox.showerror("Error", "No image loaded.")
         return
-    gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2GRAY)
     _, binarized = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
-    img_cv = binarized
-    img = img_cv
-    img_tk = ImageTk.PhotoImage(Image.fromarray(binarized))
+    Va.img_cv = binarized
+    Va.img = Va.img_cv
+    Va.img_tk = ImageTk.PhotoImage(Image.fromarray(binarized))
     canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=img_tk,tags="image")
-    #canvas.config(width=img.width(), height=img.height())
-    canvas.move("image", curX, curY)
-
+    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
+    # canvas.config(width=Va.img.width(), height=Va.img.height())
+    canvas.move("image", Va.curX, Va.curY)
+'''
 
 def on_canvas_click(event):
     canvas.start_drag_x = event.x
@@ -61,11 +58,10 @@ def on_canvas_click(event):
 
 
 def on_canvas_drag(event):
-    global curX, curY
     delta_x = event.x - canvas.start_drag_x
     delta_y = event.y - canvas.start_drag_y
-    curX += delta_x
-    curY += delta_y
+    Va.curX += delta_x
+    Va.curY += delta_y
     canvas.move("image", delta_x, delta_y)
     canvas.start_drag_x = event.x
     canvas.start_drag_y = event.y
@@ -77,33 +73,32 @@ def processWheel(event):
     else:
         zoom_out()  # 滚轮往下滚动，缩小
 
+if __name__ =='__main__': 
+    Va.InitValues()
+    '''
+    root = tk.Tk()
 
-img = None
-img_cv = None
+    canvas = tk.Canvas(root, width=800, height=600)
+    canvas.pack()
+    '''
+    canvas.bind("<ButtonPress-1>", on_canvas_click)
+    canvas.bind("<B1-Motion>", on_canvas_drag)
+    canvas.bind("<MouseWheel>", processWheel)
 
-root = tk.Tk()
+    menu = tk.Menu(root)
+    root.config(menu=menu)
 
-canvas = tk.Canvas(root, width=800, height=600)
-canvas.pack()
+    file_menu = tk.Menu(menu)
+    menu.add_cascade(label="文件", menu=file_menu)
+    file_menu.add_command(label="打开", command=open_image)  # Open
 
-canvas.bind("<ButtonPress-1>", on_canvas_click)
-canvas.bind("<B1-Motion>", on_canvas_drag)
-canvas.bind("<MouseWheel>", processWheel)
+    zoom_menu = tk.Menu(menu)
+    menu.add_cascade(label="缩放", menu=zoom_menu)
+    zoom_menu.add_command(label="放大", command=zoom_in)
+    zoom_menu.add_command(label="缩小", command=zoom_out)
 
-menu = tk.Menu(root)
-root.config(menu=menu)
+    edit_menu = tk.Menu(menu)
+    menu.add_cascade(label="编辑", menu=edit_menu)
+    edit_menu.add_command(label="二值化", command=lambda: binarize_image(122))
 
-file_menu = tk.Menu(menu)
-menu.add_cascade(label="文件", menu=file_menu)
-file_menu.add_command(label="打开", command=open_image)  # Open
-
-zoom_menu = tk.Menu(menu)
-menu.add_cascade(label="缩放", menu=zoom_menu)
-zoom_menu.add_command(label="放大", command=zoom_in)
-zoom_menu.add_command(label="缩小", command=zoom_out)
-
-edit_menu = tk.Menu(menu)
-menu.add_cascade(label="编辑",menu = edit_menu)
-edit_menu.add_command(label="二值化",command=lambda: binarize_image(122))
-
-root.mainloop()
+    root.mainloop()
