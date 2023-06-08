@@ -5,7 +5,7 @@ import cv2
 #from tkinter import messagebox
 import values as Va
 from windows import *
-from binarize_image import binarize_image
+import binarize_image
 
 def open_image():
     Va.curX = 0
@@ -99,6 +99,6 @@ if __name__ =='__main__':
 
     edit_menu = tk.Menu(menu)
     menu.add_cascade(label="编辑", menu=edit_menu)
-    edit_menu.add_command(label="二值化", command=lambda: binarize_image(122))
+    edit_menu.add_command(label="二值化", command=binarize_image.show_input_window)
 
     root.mainloop()
