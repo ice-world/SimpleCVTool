@@ -29,7 +29,7 @@ def binarize_image(input_window, threshold_entry):
     gray = cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2GRAY)
     _, binarized = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
     Va.img_cv = binarized
-    Va.img = Va.img_cv
+    Va.img = Image.fromarray(binarized)
     Va.img_tk = ImageTk.PhotoImage(Image.fromarray(binarized))
     canvas.delete("image")
     canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")

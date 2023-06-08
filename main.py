@@ -1,25 +1,41 @@
-#import tkinter as tk
-#from tkinter import filedialog
+# import tkinter as tk
+# from tkinter import filedialog
 from PIL import Image, ImageTk
 import cv2
-#from tkinter import messagebox
+import numpy as np
+# from tkinter import messagebox
 import values as Va
 from windows import *
 import binarize_image
 
+
 def open_image():
     Va.curX = 0
     Va.curY = 0
-    file_path = filedialog.askopenfilename()
+    file_path = filedialog.askopenfilename(filetypes=[("图片", ".jpg .png")])
     if file_path:
-        Va.img_cv = cv2.imread(file_path)
+        Va.img = Image.open(file_path)
+        Va.img_cv = np.array(Va.img)
+        Va.img_cv = cv2.cvtColor(Va.img_cv, cv2.COLOR_RGB2BGR)
+        #Va.img_cv = cv2.imread(file_path) 中文文件名无法正确读取
         Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
         Va.img_tk = ImageTk.PhotoImage(Va.img)
         canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
 
 
+def save_image():
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".jpg", filetypes=[("JPEG文件", "*.jpg"), ("PNG文件", "*.png")]
+    )
+    if file_path:  # 如果用户选择了保存路径
+        # cv2.imwrite(file_path, Va.img_cv) 中文文件名无法正确保存
+        Va.img.save(file_path)
+
+
 def zoom_in():
-    Va.img_cv = cv2.resize(Va.img_cv, None, fx=1.05, fy=1.05, interpolation=cv2.INTER_AREA)
+    Va.img_cv = cv2.resize(
+        Va.img_cv, None, fx=1.05, fy=1.05, interpolation=cv2.INTER_AREA
+    )
     Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
     Va.img_tk = ImageTk.PhotoImage(Va.img)
     canvas.delete("image")
@@ -28,29 +44,15 @@ def zoom_in():
 
 
 def zoom_out():
-    Va.img_cv = cv2.resize(Va.img_cv, None, fx=0.95, fy=0.95, interpolation=cv2.INTER_AREA)
+    Va.img_cv = cv2.resize(
+        Va.img_cv, None, fx=0.95, fy=0.95, interpolation=cv2.INTER_AREA
+    )
     Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
     Va.img_tk = ImageTk.PhotoImage(Va.img)
     canvas.delete("image")
     canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
     canvas.move("image", Va.curX, Va.curY)
 
-'''
-def binarize_image(threshold):
-    global Va.img, Va.img_cv, Va.img_tk
-    if Va.img_cv is None:
-        messagebox.showerror("Error", "No image loaded.")
-        return
-    gray = cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2GRAY)
-    _, binarized = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
-    Va.img_cv = binarized
-    Va.img = Va.img_cv
-    Va.img_tk = ImageTk.PhotoImage(Image.fromarray(binarized))
-    canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    # canvas.config(width=Va.img.width(), height=Va.img.height())
-    canvas.move("image", Va.curX, Va.curY)
-'''
 
 def on_canvas_click(event):
     canvas.start_drag_x = event.x
@@ -73,14 +75,15 @@ def processWheel(event):
     else:
         zoom_out()  # 滚轮往下滚动，缩小
 
-if __name__ =='__main__': 
+
+if __name__ == "__main__":
     Va.InitValues()
-    '''
+    """
     root = tk.Tk()
 
     canvas = tk.Canvas(root, width=800, height=600)
     canvas.pack()
-    '''
+    """
     canvas.bind("<ButtonPress-1>", on_canvas_click)
     canvas.bind("<B1-Motion>", on_canvas_drag)
     canvas.bind("<MouseWheel>", processWheel)
@@ -91,6 +94,7 @@ if __name__ =='__main__':
     file_menu = tk.Menu(menu)
     menu.add_cascade(label="文件", menu=file_menu)
     file_menu.add_command(label="打开", command=open_image)  # Open
+    file_menu.add_command(label="保存", command=save_image)  # Open
 
     zoom_menu = tk.Menu(menu)
     menu.add_cascade(label="缩放", menu=zoom_menu)
