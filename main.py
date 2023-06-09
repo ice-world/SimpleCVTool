@@ -47,9 +47,36 @@ def on_canvas_click(event):
 def on_canvas_release(event):
     if Va.drawing is True:
         Va.drawing = False
-        draw.draw_opencv_rectangle(
-            Va.drawing_x, Va.drawing_y, event.x - Va.curX, event.y - Va.curY, Va.img_cv
-        )
+        if Va.drawing_type == "rectangle":
+            draw.draw_opencv_rectangle(
+                Va.drawing_x,
+                Va.drawing_y,
+                event.x - Va.curX,
+                event.y - Va.curY,
+                Va.img_cv,
+            )
+        elif Va.drawing_type == "circle":
+            draw.draw_opencv_circle(
+                Va.drawing_x,
+                Va.drawing_y,
+                event.x - Va.curX,
+                event.y - Va.curY,
+                Va.img_cv,
+            )
+        elif Va.drawing_type == "line":
+            draw.draw_opencv_line(
+                Va.drawing_x,
+                Va.drawing_y,
+                event.x - Va.curX,
+                event.y - Va.curY,
+                Va.img_cv,
+            )
+        elif Va.drawing_type == "point":
+            draw.draw_opencv_point(
+                event.x - Va.curX,
+                event.y - Va.curY,
+                Va.img_cv,
+            )
 
 
 def on_canvas_drag(event):
@@ -62,6 +89,30 @@ def on_canvas_drag(event):
                 event.x - Va.curX,
                 event.y - Va.curY,
                 temp_img_cv,
+            )
+        elif Va.drawing_type == "circle":
+            temp_img_cv = Va.img_cv.copy()
+            draw.draw_opencv_circle(
+                Va.drawing_x,
+                Va.drawing_y,
+                event.x - Va.curX,
+                event.y - Va.curY,
+                temp_img_cv,
+            )
+        elif Va.drawing_type == "line":
+            temp_img_cv = Va.img_cv.copy()
+            draw.draw_opencv_line(
+                Va.drawing_x,
+                Va.drawing_y,
+                event.x - Va.curX,
+                event.y - Va.curY,
+                temp_img_cv,
+            )
+        elif Va.drawing_type == "point":
+            draw.draw_opencv_point(
+                event.x - Va.curX,
+                event.y - Va.curY,
+                Va.img_cv,
             )
     else:
         delta_x = event.x - canvas.start_drag_x
@@ -134,10 +185,10 @@ if __name__ == "__main__":
     shape_menu = tk.Menu(draw_menu)
     draw_menu.add_cascade(label="图形", menu=shape_menu)
     shape_menu.add_command(label="矩形", command=draw.draw_rectangle)
-    # shape_menu.add_command(label="圆", command=lambda: set_shape("circle"))
-    # shape_menu.add_command(label="线", command=lambda: set_shape("line"))
+    shape_menu.add_command(label="圆", command=draw.draw_circle)
+    shape_menu.add_command(label="线", command=draw.draw_line)
     # shape_menu.add_command(label="多边形", command=lambda: set_shape("polygon"))
-    # shape_menu.add_command(label="曲线", command=lambda: set_shape("curve"))
+    shape_menu.add_command(label="曲线", command=draw.draw_point)
 
     color_menu = tk.Menu(draw_menu)
     draw_menu.add_cascade(label="颜色", menu=color_menu)
