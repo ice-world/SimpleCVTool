@@ -4,11 +4,12 @@ from PIL import Image, ImageTk
 import cv2
 import numpy as np
 
-# from tkinter import messagebox
+
 import values as Va
 from windows import *
 import binarize_image
 from files import *
+import draw
 
 
 def zoom_in():
@@ -34,20 +35,43 @@ def zoom_out():
 
 
 def on_canvas_click(event):
-    canvas.start_drag_x = event.x
-    canvas.start_drag_y = event.y
+    if Va.drawing is True:
+        Va.drawing_x = event.x - Va.curX
+        Va.drawing_y = event.y - Va.curY
+    else:
+        canvas.start_drag_x = event.x
+        canvas.start_drag_y = event.y
     update_status_bar(event.x, event.y)
+
+
+def on_canvas_release(event):
+    if Va.drawing is True:
+        Va.drawing = False
+        draw.draw_opencv_rectangle(
+            Va.drawing_x, Va.drawing_y, event.x - Va.curX, event.y - Va.curY, Va.img_cv
+        )
 
 
 def on_canvas_drag(event):
-    delta_x = event.x - canvas.start_drag_x
-    delta_y = event.y - canvas.start_drag_y
-    Va.curX += delta_x
-    Va.curY += delta_y
-    canvas.move("image", delta_x, delta_y)
-    canvas.start_drag_x = event.x
-    canvas.start_drag_y = event.y
-    update_status_bar(event.x, event.y)
+    if Va.drawing is True:
+        if Va.drawing_type == "rectangle":
+            temp_img_cv = Va.img_cv.copy()
+            draw.draw_opencv_rectangle(
+                Va.drawing_x,
+                Va.drawing_y,
+                event.x - Va.curX,
+                event.y - Va.curY,
+                temp_img_cv,
+            )
+    else:
+        delta_x = event.x - canvas.start_drag_x
+        delta_y = event.y - canvas.start_drag_y
+        Va.curX += delta_x
+        Va.curY += delta_y
+        canvas.move("image", delta_x, delta_y)
+        canvas.start_drag_x = event.x
+        canvas.start_drag_y = event.y
+        update_status_bar(event.x, event.y)
 
 
 def on_canvas_move(event):
@@ -77,24 +101,17 @@ def update_status_bar(x, y):
 
 if __name__ == "__main__":
     Va.InitValues()
-    """
-    root = tk.Tk()
 
-    canvas = tk.Canvas(root, width=800, height=600)
-    canvas.pack()
-    """
     canvas.bind("<ButtonPress-1>", on_canvas_click)
     canvas.bind("<B1-Motion>", on_canvas_drag)
     canvas.bind("<MouseWheel>", processWheel)
     canvas.bind("<Motion>", on_canvas_move)
+    canvas.bind("<ButtonRelease>", on_canvas_release)
 
     root.title(f"{Va.SOFTWARE_NAME} - {Va.SOFTWARE_AUTHOR}")
 
     menu = tk.Menu(root)
     root.config(menu=menu)
-
-    status_bar = tk.Label(root, text="准备", bd=1, relief=tk.SUNKEN, anchor=tk.W)
-    status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
     file_menu = tk.Menu(menu)
     menu.add_cascade(label="文件", menu=file_menu)
@@ -110,5 +127,28 @@ if __name__ == "__main__":
     edit_menu = tk.Menu(menu)
     menu.add_cascade(label="编辑", menu=edit_menu)
     edit_menu.add_command(label="二值化", command=binarize_image.show_input_window)
+
+    draw_menu = tk.Menu(menu)
+    menu.add_cascade(label="绘图", menu=draw_menu)
+
+    shape_menu = tk.Menu(draw_menu)
+    draw_menu.add_cascade(label="图形", menu=shape_menu)
+    shape_menu.add_command(label="矩形", command=draw.draw_rectangle)
+    # shape_menu.add_command(label="圆", command=lambda: set_shape("circle"))
+    # shape_menu.add_command(label="线", command=lambda: set_shape("line"))
+    # shape_menu.add_command(label="多边形", command=lambda: set_shape("polygon"))
+    # shape_menu.add_command(label="曲线", command=lambda: set_shape("curve"))
+
+    color_menu = tk.Menu(draw_menu)
+    draw_menu.add_cascade(label="颜色", menu=color_menu)
+    color_menu.add_command(label="红", command=lambda: draw.set_drawing_color("red"))
+    color_menu.add_command(label="绿", command=lambda: draw.set_drawing_color("green"))
+    color_menu.add_command(label="蓝", command=lambda: draw.set_drawing_color("blue"))
+
+    width_menu = tk.Menu(draw_menu)
+    draw_menu.add_cascade(label="线宽", menu=width_menu)
+    width_menu.add_command(label="1", command=lambda: draw.set_drawing_width(1))
+    width_menu.add_command(label="2", command=lambda: draw.set_drawing_width(2))
+    width_menu.add_command(label="3", command=lambda: draw.set_drawing_width(3))
 
     root.mainloop()
