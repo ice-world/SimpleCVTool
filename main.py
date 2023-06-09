@@ -21,6 +21,7 @@ def open_image():
         Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
         Va.img_tk = ImageTk.PhotoImage(Va.img)
         canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
+        root.title(f"{Va.SOFTWARE_NAME} - {Va.SOFTWARE_AUTHOR} - {file_path}")
 
 
 def save_image():
@@ -103,6 +104,8 @@ if __name__ == "__main__":
     canvas.bind("<B1-Motion>", on_canvas_drag)
     canvas.bind("<MouseWheel>", processWheel)
     canvas.bind("<Motion>", on_canvas_move)
+
+    root.title(f"{Va.SOFTWARE_NAME} - {Va.SOFTWARE_AUTHOR}")
 
     menu = tk.Menu(root)
     root.config(menu=menu)
