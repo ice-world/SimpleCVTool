@@ -3,34 +3,12 @@
 from PIL import Image, ImageTk
 import cv2
 import numpy as np
+
 # from tkinter import messagebox
 import values as Va
 from windows import *
 import binarize_image
-
-
-def open_image():
-    Va.curX = 0
-    Va.curY = 0
-    file_path = filedialog.askopenfilename(filetypes=[("图片", ".jpg .png")])
-    if file_path:
-        Va.img = Image.open(file_path)
-        Va.img_cv = np.array(Va.img)
-        Va.img_cv = cv2.cvtColor(Va.img_cv, cv2.COLOR_RGB2BGR)
-        #Va.img_cv = cv2.imread(file_path) 中文文件名无法正确读取
-        Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-        Va.img_tk = ImageTk.PhotoImage(Va.img)
-        canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-        root.title(f"{Va.SOFTWARE_NAME} - {Va.SOFTWARE_AUTHOR} - {file_path}")
-
-
-def save_image():
-    file_path = filedialog.asksaveasfilename(
-        defaultextension=".jpg", filetypes=[("JPEG文件", "*.jpg"), ("PNG文件", "*.png")]
-    )
-    if file_path:  # 如果用户选择了保存路径
-        # cv2.imwrite(file_path, Va.img_cv) 中文文件名无法正确保存
-        Va.img.save(file_path)
+from files import *
 
 
 def zoom_in():
@@ -71,8 +49,10 @@ def on_canvas_drag(event):
     canvas.start_drag_y = event.y
     update_status_bar(event.x, event.y)
 
+
 def on_canvas_move(event):
     update_status_bar(event.x, event.y)
+
 
 def processWheel(event):
     if event.delta > 0:
@@ -80,12 +60,15 @@ def processWheel(event):
     else:
         zoom_out()  # 滚轮往下滚动，缩小
 
+
 def update_status_bar(x, y):
     if Va.img_cv is not None:
         height, width, _ = Va.img_cv.shape
         if Va.curX <= x < width + Va.curX and Va.curY <= y < height + Va.curY:
-            color = Va.img_cv[y -Va.curY, x - Va.curX]
-            status_bar.config(text=f"位置：({x - Va.curX}, {y - Va.curY}) 颜色：(BGR) {color}")
+            color = Va.img_cv[y - Va.curY, x - Va.curX]
+            status_bar.config(
+                text=f"位置：({x - Va.curX}, {y - Va.curY}) 颜色：(BGR) {color}"
+            )
         else:
             status_bar.config(text="鼠标在画布外")
     else:
@@ -113,11 +96,11 @@ if __name__ == "__main__":
     status_bar = tk.Label(root, text="准备", bd=1, relief=tk.SUNKEN, anchor=tk.W)
     status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
-
     file_menu = tk.Menu(menu)
     menu.add_cascade(label="文件", menu=file_menu)
+    file_menu.add_command(label="新建", command=new_image)  # New
     file_menu.add_command(label="打开", command=open_image)  # Open
-    file_menu.add_command(label="保存", command=save_image)  # Open
+    file_menu.add_command(label="保存", command=save_image)  # Save
 
     zoom_menu = tk.Menu(menu)
     menu.add_cascade(label="缩放", menu=zoom_menu)
