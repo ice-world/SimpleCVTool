@@ -7,6 +7,7 @@ global drawing
 global drawing_type
 global drawing_x, drawing_y
 global color, drawing_width
+global drawing_text
 
 
 def InitValues():
@@ -18,6 +19,7 @@ def InitValues():
     global drawing_type
     global drawing_x, drawing_y
     global color, drawing_width
+    global drawing_text
 
     color = (255, 0, 0)
     drawing_width = 1

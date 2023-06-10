@@ -77,6 +77,8 @@ def on_canvas_release(event):
                 event.y - Va.curY,
                 Va.img_cv,
             )
+        elif Va.drawing_type == "text":
+            draw.draw_opencv_text(event.x - Va.curX, event.y - Va.curY, Va.img_cv)
 
 
 def on_canvas_drag(event):
@@ -184,6 +186,7 @@ if __name__ == "__main__":
 
     shape_menu = tk.Menu(draw_menu)
     draw_menu.add_cascade(label="图形", menu=shape_menu)
+    shape_menu.add_command(label="文字", command=draw.draw_text)
     shape_menu.add_command(label="矩形", command=draw.draw_rectangle)
     shape_menu.add_command(label="圆", command=draw.draw_circle)
     shape_menu.add_command(label="线", command=draw.draw_line)
