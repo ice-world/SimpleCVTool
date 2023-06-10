@@ -9,6 +9,7 @@ global drawing_x, drawing_y
 global color, drawing_width
 global drawing_text
 
+global in_operation
 
 def InitValues():
     global img, img_cv, img_tk
@@ -20,6 +21,8 @@ def InitValues():
     global drawing_x, drawing_y
     global color, drawing_width
     global drawing_text
+
+    global in_operation
 
     color = (255, 0, 0)
     drawing_width = 1
@@ -36,3 +39,5 @@ def InitValues():
 
     SOFTWARE_NAME = "SimpleCVTool"
     SOFTWARE_AUTHOR = "Xunchi Zhang"
+
+    in_operation = False

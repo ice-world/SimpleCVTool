@@ -4,6 +4,10 @@ import cv2
 
 
 def show_input_window():
+    if Va.in_operation == True:
+        return
+    Va.in_operation = True
+
     input_window = tk.Toplevel(root)
     input_window.title("输入阈值")
     input_window.geometry("200x100")
@@ -16,6 +20,8 @@ def show_input_window():
 
     confirm_button = tk.Button(input_window, text="确定", command=lambda: binarize_image(input_window, threshold_entry))
     confirm_button.pack(pady=10)
+
+    Va.in_operation = False
 
 def binarize_image(input_window, threshold_entry):
     threshold = int(threshold_entry.get())

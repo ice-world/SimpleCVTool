@@ -194,10 +194,5 @@ if __name__ == "__main__":
     width_menu.add_command(label="1", command=lambda: draw.set_drawing_width(1))
     width_menu.add_command(label="2", command=lambda: draw.set_drawing_width(2))
     width_menu.add_command(label="3", command=lambda: draw.set_drawing_width(3))
-
-    rotate_menu = tk.Menu(menu)
-    menu.add_cascade(label="旋转", menu=rotate_menu)
     
-
-
     root.mainloop()

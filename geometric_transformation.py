@@ -5,6 +5,10 @@ from tkinter import filedialog, Scale
 
 
 def zoom_in():
+    if Va.in_operation == True:
+        return
+    Va.in_operation = True
+
     Va.img_cv = cv2.resize(
         Va.img_cv, None, fx=1.05, fy=1.05, interpolation=cv2.INTER_AREA
     )
@@ -14,8 +18,13 @@ def zoom_in():
     canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
     canvas.move("image", Va.curX, Va.curY)  # 移动到当前位置，使放大缩小后位置不变
 
+    Va.in_operation = False
 
 def zoom_out():
+    if Va.in_operation == True:
+        return
+    Va.in_operation = True
+
     Va.img_cv = cv2.resize(
         Va.img_cv, None, fx=0.95, fy=0.95, interpolation=cv2.INTER_AREA
     )
@@ -25,13 +34,13 @@ def zoom_out():
     canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
     canvas.move("image", Va.curX, Va.curY)
 
-
-def rotate():
-    angle_s = simpledialog.askstring("输入角度", "请输入要旋转的角度：")
-    angle = int(angle_s)
-
+    Va.in_operation = False
 
 def show_rotation_window():
+    if Va.in_operation == True:
+        return
+    Va.in_operation = True
+
     rotation_window = tk.Toplevel(root)
     rotation_window.title("旋转角度")
     rotation_scale = Scale(
@@ -68,6 +77,7 @@ def rotate_image_show(angle):
 
 def rotate_image_confirm(rotation_window,angle):
     rotation_window.destroy()
+    Va.in_operation = False
     if Va.img_cv is not None:
         Va.rotation_angle = int(angle)
         height, width, _ = Va.img_cv.shape
