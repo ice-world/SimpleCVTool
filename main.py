@@ -10,28 +10,7 @@ from windows import *
 import binarize_image
 from files import *
 import draw
-
-
-def zoom_in():
-    Va.img_cv = cv2.resize(
-        Va.img_cv, None, fx=1.05, fy=1.05, interpolation=cv2.INTER_AREA
-    )
-    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-    Va.img_tk = ImageTk.PhotoImage(Va.img)
-    canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    canvas.move("image", Va.curX, Va.curY)  # 移动到当前位置，使放大缩小后位置不变
-
-
-def zoom_out():
-    Va.img_cv = cv2.resize(
-        Va.img_cv, None, fx=0.95, fy=0.95, interpolation=cv2.INTER_AREA
-    )
-    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-    Va.img_tk = ImageTk.PhotoImage(Va.img)
-    canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    canvas.move("image", Va.curX, Va.curY)
+from geometric_transformation import *
 
 
 def on_canvas_click(event):
@@ -140,14 +119,24 @@ def processWheel(event):
 
 def update_status_bar(x, y):
     if Va.img_cv is not None:
-        height, width, _ = Va.img_cv.shape
-        if Va.curX <= x < width + Va.curX and Va.curY <= y < height + Va.curY:
-            color = Va.img_cv[y - Va.curY, x - Va.curX]
-            status_bar.config(
-                text=f"位置：({x - Va.curX}, {y - Va.curY}) 颜色：(BGR) {color}"
-            )
+        if len(Va.img_cv.shape) == 3:
+            height, width, _ = Va.img_cv.shape
+            if Va.curX <= x < width + Va.curX and Va.curY <= y < height + Va.curY:
+                color = Va.img_cv[y - Va.curY, x - Va.curX]
+                status_bar.config(
+                    text=f"位置：({x - Va.curX}, {y - Va.curY}) 颜色：(BGR) {color}"
+                )
+            else:
+                status_bar.config(text="鼠标在画布外")
         else:
-            status_bar.config(text="鼠标在画布外")
+            height, width = Va.img_cv.shape
+            if Va.curX <= x < width + Va.curX and Va.curY <= y < height + Va.curY:
+                color = Va.img_cv[y - Va.curY, x - Va.curX]
+                status_bar.config(
+                    text=f"位置：({x - Va.curX}, {y - Va.curY}) 颜色：(灰度) {color}"
+                )
+            else:
+                status_bar.config(text="鼠标在画布外")
     else:
         status_bar.config(text="没有打开图片")
 
@@ -172,10 +161,11 @@ if __name__ == "__main__":
     file_menu.add_command(label="打开", command=open_image)  # Open
     file_menu.add_command(label="保存", command=save_image)  # Save
 
-    zoom_menu = tk.Menu(menu)
-    menu.add_cascade(label="缩放", menu=zoom_menu)
-    zoom_menu.add_command(label="放大", command=zoom_in)
-    zoom_menu.add_command(label="缩小", command=zoom_out)
+    geometric_menu = tk.Menu(menu)
+    menu.add_cascade(label="几何变换", menu=geometric_menu)
+    geometric_menu.add_command(label="放大", command=zoom_in)
+    geometric_menu.add_command(label="缩小", command=zoom_out)
+    geometric_menu.add_command(label="旋转", command=show_rotation_window)
 
     edit_menu = tk.Menu(menu)
     menu.add_cascade(label="编辑", menu=edit_menu)
@@ -204,5 +194,10 @@ if __name__ == "__main__":
     width_menu.add_command(label="1", command=lambda: draw.set_drawing_width(1))
     width_menu.add_command(label="2", command=lambda: draw.set_drawing_width(2))
     width_menu.add_command(label="3", command=lambda: draw.set_drawing_width(3))
+
+    rotate_menu = tk.Menu(menu)
+    menu.add_cascade(label="旋转", menu=rotate_menu)
+    
+
 
     root.mainloop()
