@@ -63,7 +63,13 @@ def show_rotation_window():
 def rotate_image_show(angle):
     if Va.img_cv is not None:
         Va.rotation_angle = int(angle)
-        height, width, _ = Va.img_cv.shape
+        height = 0
+        width = 0
+        if len(Va.img_cv.shape) == 3:
+            height, width, _ = Va.img_cv.shape
+        else:
+            height, width = Va.img_cv.shape
+        center = (width // 2, height // 2)
         center = (width // 2, height // 2)
         rotation_matrix = cv2.getRotationMatrix2D(center, Va.rotation_angle, 1)
         img_cv = cv2.warpAffine(Va.img_cv, rotation_matrix, (width, height))
@@ -80,7 +86,12 @@ def rotate_image_confirm(rotation_window,angle):
     Va.in_operation = False
     if Va.img_cv is not None:
         Va.rotation_angle = int(angle)
-        height, width, _ = Va.img_cv.shape
+        height = 0
+        width = 0
+        if len(Va.img_cv.shape) == 3:
+            height, width, _ = Va.img_cv.shape
+        else:
+            height, width = Va.img_cv.shape
         center = (width // 2, height // 2)
         rotation_matrix = cv2.getRotationMatrix2D(center, Va.rotation_angle, 1)
         Va.img_cv = cv2.warpAffine(Va.img_cv, rotation_matrix, (width, height))
