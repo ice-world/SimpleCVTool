@@ -12,6 +12,7 @@ from files import *
 import draw
 import geo_trans
 import filter
+import histogram_equalization
 
 def on_canvas_click(event):
     if Va.drawing is True:
@@ -21,6 +22,7 @@ def on_canvas_click(event):
         canvas.start_drag_x = event.x
         canvas.start_drag_y = event.y
     update_status_bar(event.x, event.y)
+
 
 
 def on_canvas_release(event):
@@ -212,5 +214,12 @@ if __name__ == "__main__":
     filter_menu.add_command(label="均值滤波", command=filter.mean_filter)
     filter_menu.add_command(label="高斯滤波", command=filter.gaussian_filter)
     filter_menu.add_command(label="中值滤波", command=filter.median_filter)
+
+    histogram_menu = tk.Menu(menu)
+    menu.add_cascade(label="直方图均衡化", menu=histogram_menu)
+    histogram_menu.add_command(label="全局直方图均衡化", command=histogram_equalization.global_histogram_equalization)
+    histogram_menu.add_command(label="局部直方图均衡化", command=histogram_equalization.show_local_histogram_equalization_window)
+    histogram_menu.add_command(label="限制对比度自适应直方图均衡化", command=histogram_equalization.show_clahe_window)
+
 
     root.mainloop()
