@@ -46,11 +46,7 @@ def draw_opencv_text(x, y, img_cv):
     Va.img_tk = ImageTk.PhotoImage(Va.img)
     Va.img_cv = np.array(Va.img)   #将绘有文字的图片转换回opencv格式，保证信息同步  
     Va.img_cv = cv2.cvtColor(Va.img_cv, cv2.COLOR_RGB2BGR)      #将RGB的格式转化回BGR，和打开图片同理
-    canvas.delete("image")  
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    canvas.move("image", Va.curX, Va.curY)
-
-
+    update_image()
 
 def draw_opencv_rectangle(x1, y1, x2, y2, cur_img):
     cv2.rectangle(cur_img, (x1, y1), (x2, y2), Va.color, Va.drawing_width)

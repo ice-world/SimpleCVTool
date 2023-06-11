@@ -14,11 +14,7 @@ def zoom_in():
     Va.img_cv = cv2.resize(
         Va.img_cv, None, fx=1.05, fy=1.05, interpolation=cv2.INTER_AREA
     )
-    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-    Va.img_tk = ImageTk.PhotoImage(Va.img)
-    canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    canvas.move("image", Va.curX, Va.curY)  # 移动到当前位置，使放大缩小后位置不变
+    update_image()
 
     Va.in_operation = False
 
@@ -31,11 +27,7 @@ def zoom_out():
     Va.img_cv = cv2.resize(
         Va.img_cv, None, fx=0.95, fy=0.95, interpolation=cv2.INTER_AREA
     )
-    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-    Va.img_tk = ImageTk.PhotoImage(Va.img)
-    canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    canvas.move("image", Va.curX, Va.curY)
+    update_image()
 
     Va.in_operation = False
 
@@ -77,12 +69,7 @@ def rotate_image_show(angle):
         center = (width // 2, height // 2)
         rotation_matrix = cv2.getRotationMatrix2D(center, Va.rotation_angle, 1)
         img_cv = cv2.warpAffine(Va.img_cv, rotation_matrix, (width, height))
-        Va.img = Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
-        Va.img_tk = ImageTk.PhotoImage(Va.img)
-        canvas.delete("image")
-        canvas.create_image(
-            Va.curX, Va.curY, image=Va.img_tk, anchor=tk.NW, tags="image"
-        )
+        update_image()
 
 
 def rotate_image_confirm(rotation_window, angle):
@@ -99,12 +86,7 @@ def rotate_image_confirm(rotation_window, angle):
         center = (width // 2, height // 2)
         rotation_matrix = cv2.getRotationMatrix2D(center, Va.rotation_angle, 1)
         Va.img_cv = cv2.warpAffine(Va.img_cv, rotation_matrix, (width, height))
-        Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-        Va.img_tk = ImageTk.PhotoImage(Va.img)
-        canvas.delete("image")
-        canvas.create_image(
-            Va.curX, Va.curY, image=Va.img_tk, anchor=tk.NW, tags="image"
-        )
+        update_image()
 
 
 def cut_img_draw():
@@ -133,9 +115,5 @@ def cut_img(x1, y1, x2, y2):
         cropped_img = Va.img_cv[y1:y2, x1:x2]
 
         Va.img_cv = cropped_img.copy()
-        Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-        Va.img_tk = ImageTk.PhotoImage(Va.img)
-        canvas.delete("image")
-        canvas.create_image(0, 0, image=Va.img_tk, tags="image",anchor="nw")
-        canvas.move("image", Va.curX, Va.curY)
+        update_image()
         Va.in_operation = False

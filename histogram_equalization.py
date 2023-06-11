@@ -46,11 +46,7 @@ def global_histogram_equalization():
     else:
         Va.img_cv = cv2.equalizeHist(Va.img_cv)
 
-    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-    Va.img_tk = ImageTk.PhotoImage(Va.img)
-    canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    canvas.move("image", Va.curX, Va.curY)  # 移动到当前位置，使放大缩小后位置不变
+    update_image()
 
 def local_histogram_equalization(block_size):
     if Va.img_cv is None:
@@ -65,11 +61,7 @@ def local_histogram_equalization(block_size):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(block_size, block_size))
         Va.img_cv = clahe.apply(Va.img_cv)
 
-    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-    Va.img_tk = ImageTk.PhotoImage(Va.img)
-    canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    canvas.move("image", Va.curX, Va.curY)  # 移动到当前位置，使放大缩小后位置不变
+    update_image()
 
 def contrast_limited_adaptive_histogram_equalization(clip_limit, block_size):
     if Va.img_cv is None:
@@ -84,8 +76,4 @@ def contrast_limited_adaptive_histogram_equalization(clip_limit, block_size):
         clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(block_size, block_size))
         Va.img_cv = clahe.apply(Va.img_cv)
 
-    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-    Va.img_tk = ImageTk.PhotoImage(Va.img)
-    canvas.delete("image")
-    canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
-    canvas.move("image", Va.curX, Va.curY)  # 移动到当前位置，使放大缩小后位置不变
+    update_image()
