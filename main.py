@@ -10,7 +10,7 @@ from windows import *
 import binarize_image
 from files import *
 import draw
-from geometric_transformation import *
+import geo_trans
 
 
 def on_canvas_click(event):
@@ -58,6 +58,9 @@ def on_canvas_release(event):
             )
         elif Va.drawing_type == "text":
             draw.draw_opencv_text(event.x - Va.curX, event.y - Va.curY, Va.img_cv)
+        elif Va.drawing_type == "cut":
+            geo_trans.cut_img(Va.drawing_x, Va.drawing_y, event.x - Va.curX, event.y - Va.curY)
+            
 
 
 def on_canvas_drag(event):
@@ -95,6 +98,15 @@ def on_canvas_drag(event):
                 event.y - Va.curY,
                 Va.img_cv,
             )
+        elif Va.drawing_type == "cut":
+            temp_img_cv = Va.img_cv.copy()
+            draw.draw_opencv_rectangle(
+                Va.drawing_x,
+                Va.drawing_y,
+                event.x - Va.curX,
+                event.y - Va.curY,
+                temp_img_cv,
+            )
     else:
         delta_x = event.x - canvas.start_drag_x
         delta_y = event.y - canvas.start_drag_y
@@ -112,9 +124,9 @@ def on_canvas_move(event):
 
 def processWheel(event):
     if event.delta > 0:
-        zoom_in()  # 滚轮往上滚动，放大
+        geo_trans.zoom_in()  # 滚轮往上滚动，放大
     else:
-        zoom_out()  # 滚轮往下滚动，缩小
+        geo_trans.zoom_out()  # 滚轮往下滚动，缩小
 
 
 def update_status_bar(x, y):
@@ -163,10 +175,10 @@ if __name__ == "__main__":
 
     geometric_menu = tk.Menu(menu)
     menu.add_cascade(label="几何变换", menu=geometric_menu)
-    geometric_menu.add_command(label="放大", command=zoom_in)
-    geometric_menu.add_command(label="缩小", command=zoom_out)
-    geometric_menu.add_command(label="旋转", command=show_rotation_window)
-
+    geometric_menu.add_command(label="放大", command=geo_trans.zoom_in)
+    geometric_menu.add_command(label="缩小", command=geo_trans.zoom_out)
+    geometric_menu.add_command(label="旋转", command=geo_trans.show_rotation_window)
+    geometric_menu.add_command(label="裁剪", command=geo_trans.cut_img_draw)
     edit_menu = tk.Menu(menu)
     menu.add_cascade(label="编辑", menu=edit_menu)
     edit_menu.add_command(label="二值化", command=binarize_image.show_input_window)
