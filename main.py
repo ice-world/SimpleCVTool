@@ -11,7 +11,7 @@ import binarize_image
 from files import *
 import draw
 import geo_trans
-
+import filter
 
 def on_canvas_click(event):
     if Va.drawing is True:
@@ -207,4 +207,10 @@ if __name__ == "__main__":
     width_menu.add_command(label="2", command=lambda: draw.set_drawing_width(2))
     width_menu.add_command(label="3", command=lambda: draw.set_drawing_width(3))
     
+    filter_menu = tk.Menu(menu)
+    menu.add_cascade(label="滤波", menu=filter_menu)
+    filter_menu.add_command(label="均值滤波", command=filter.mean_filter)
+    filter_menu.add_command(label="高斯滤波", command=filter.gaussian_filter)
+    filter_menu.add_command(label="中值滤波", command=filter.median_filter)
+
     root.mainloop()
