@@ -183,7 +183,7 @@ if __name__ == "__main__":
     geometric_menu.add_command(label="旋转", command=geo_trans.show_rotation_window)
     geometric_menu.add_command(label="裁剪", command=geo_trans.cut_img_draw)
     edit_menu = tk.Menu(menu)
-    menu.add_cascade(label="编辑", menu=edit_menu)
+    menu.add_cascade(label="二值化", menu=edit_menu)
     edit_menu.add_command(label="二值化", command=binarize_image.show_input_window)
 
     draw_menu = tk.Menu(menu)
@@ -228,4 +228,7 @@ if __name__ == "__main__":
     edge_detection_menu.add_command(label="外轮廓检测", command=edge_detection.find_external_contours)
     edge_detection_menu.add_command(label="填充轮廓", command=edge_detection.fill_contours)
 
+    watermarks_menu = tk.Menu(menu)
+    menu.add_cascade(label="水印", menu=watermarks_menu)
+    watermarks_menu.add_command(label="水印", command=draw.draw_text)
     root.mainloop()
