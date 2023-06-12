@@ -5,6 +5,10 @@ from tkinter import filedialog, Scale
 
 
 def show_local_histogram_equalization_window():
+    if Va.in_operation == True:
+        return
+    Va.in_operation = True
+
     local_window = tk.Toplevel(root)
     local_window.title("局部直方图均衡化")
     local_window.geometry("200x100")
@@ -17,7 +21,13 @@ def show_local_histogram_equalization_window():
     apply_button = tk.Button(local_window, text="应用", command=lambda: local_histogram_equalization(int(block_size_entry.get())))
     apply_button.pack()
 
+    Va.in_operation = False
+
 def show_clahe_window():
+    if Va.in_operation == True:
+        return
+    Va.in_operation = True
+
     clahe_window = tk.Toplevel(root)
     clahe_window.title("限制对比度自适应直方图均衡化")
     clahe_window.geometry("200x150")
@@ -35,7 +45,13 @@ def show_clahe_window():
     apply_button = tk.Button(clahe_window, text="应用", command=lambda: contrast_limited_adaptive_histogram_equalization(float(clip_limit_entry.get()), int(block_size_entry.get())))
     apply_button.pack()
 
+    Va.in_operation = False
+
 def global_histogram_equalization():
+    if Va.in_operation == True:
+        return
+    Va.in_operation = True
+
     if Va.img_cv is None:
         return
 
@@ -47,6 +63,7 @@ def global_histogram_equalization():
         Va.img_cv = cv2.equalizeHist(Va.img_cv)
 
     update_image()
+    Va.in_operation = False
 
 def local_histogram_equalization(block_size):
     if Va.img_cv is None:
