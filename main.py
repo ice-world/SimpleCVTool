@@ -8,11 +8,12 @@ import numpy as np
 import values as Va
 from windows import *
 import binarize_image
-from files import *
+import files
 import draw
 import geo_trans
 import filter
 import histogram_equalization
+import edge_detection
 
 def on_canvas_click(event):
     if Va.drawing is True:
@@ -171,9 +172,9 @@ if __name__ == "__main__":
 
     file_menu = tk.Menu(menu)
     menu.add_cascade(label="文件", menu=file_menu)
-    file_menu.add_command(label="新建", command=new_image)  # New
-    file_menu.add_command(label="打开", command=open_image)  # Open
-    file_menu.add_command(label="保存", command=save_image)  # Save
+    file_menu.add_command(label="新建", command=files.new_image)  # New
+    file_menu.add_command(label="打开", command=files.open_image)  # Open
+    file_menu.add_command(label="保存", command=files.save_image)  # Save
 
     geometric_menu = tk.Menu(menu)
     menu.add_cascade(label="几何变换", menu=geometric_menu)
@@ -221,5 +222,10 @@ if __name__ == "__main__":
     histogram_menu.add_command(label="局部直方图均衡化", command=histogram_equalization.show_local_histogram_equalization_window)
     histogram_menu.add_command(label="限制对比度自适应直方图均衡化", command=histogram_equalization.show_clahe_window)
 
+    edge_detection_menu = tk.Menu(menu)
+    menu.add_cascade(label="边缘检测", menu=edge_detection_menu)
+    edge_detection_menu.add_command(label="Canny 算法", command=edge_detection.show_canny_input_window)
+    edge_detection_menu.add_command(label="外轮廓检测", command=edge_detection.find_external_contours)
+    edge_detection_menu.add_command(label="填充轮廓", command=edge_detection.fill_contours)
 
     root.mainloop()
