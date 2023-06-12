@@ -14,6 +14,7 @@ import geo_trans
 import filter
 import histogram_equalization
 import edge_detection
+import morphology
 
 def on_canvas_click(event):
     if Va.drawing is True:
@@ -231,4 +232,12 @@ if __name__ == "__main__":
     watermarks_menu = tk.Menu(menu)
     menu.add_cascade(label="水印", menu=watermarks_menu)
     watermarks_menu.add_command(label="水印", command=draw.draw_text)
+
+    morphology_menu = tk.Menu(menu)
+    menu.add_cascade(label="形态学操作", menu=morphology_menu)
+    morphology_menu.add_command(label="开", command=lambda: morphology.show_morphology_input_window("opening"))
+    morphology_menu.add_command(label="闭", command=lambda: morphology.show_morphology_input_window("closing"))
+    morphology_menu.add_command(label="膨胀", command=lambda: morphology.show_morphology_input_window("dilation"))
+    morphology_menu.add_command(label="腐蚀", command=lambda: morphology.show_morphology_input_window("erosion"))
+
     root.mainloop()
