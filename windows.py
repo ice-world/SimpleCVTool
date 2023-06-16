@@ -20,6 +20,10 @@ status_bar = tk.Label(root, text="准备", bd=1, relief=tk.SUNKEN, anchor=tk.W)
 status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
 def update_image():
+    if len(Va.img_cv.shape) == 2:
+        Va.img = Image.fromarray(cv2.cvtColor(cv2.cvtColor(Va.img_cv,cv2.COLOR_GRAY2BGR), cv2.COLOR_BGR2RGB))
+    else:
+        Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
     Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
     Va.img_tk = ImageTk.PhotoImage(Va.img)
     canvas.delete("image")
