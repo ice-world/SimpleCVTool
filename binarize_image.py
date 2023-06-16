@@ -55,9 +55,12 @@ def binarize_image(input_window, threshold_entry):
     
     #bi = gasuss_noise(binarized, mean=0, var=0.01)  # 均值为0，方差为0.01
     Va.img_cv = binarized
+    update_image()
+    '''
     Va.img = Image.fromarray(Va.img_cv)
     Va.img_tk = ImageTk.PhotoImage(Va.img)
     canvas.delete("image")
     canvas.create_image(0, 0, anchor=tk.NW, image=Va.img_tk, tags="image")
     # canvas.config(width=img.width(), height=img.height())
     canvas.move("image", Va.curX, Va.curY)
+    '''

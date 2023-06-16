@@ -21,10 +21,12 @@ status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
 def update_image():
     if len(Va.img_cv.shape) == 2:
-        Va.img = Image.fromarray(cv2.cvtColor(cv2.cvtColor(Va.img_cv,cv2.COLOR_GRAY2BGR), cv2.COLOR_BGR2RGB))
+        Va.img = Image.fromarray(cv2.cvtColor(cv2.cvtColor(Va.img_cv, cv2.COLOR_GRAY2BGR), cv2.COLOR_BGR2RGB))
+        print("update image gray")
     else:
         Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
-    Va.img = Image.fromarray(cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2RGB))
+        print("update image")
     Va.img_tk = ImageTk.PhotoImage(Va.img)
     canvas.delete("image")
     canvas.create_image(Va.curX, Va.curY, anchor=tk.NW, image=Va.img_tk, tags="image")
+    

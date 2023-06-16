@@ -59,11 +59,13 @@ def global_histogram_equalization():
         img_yuv = cv2.cvtColor(Va.img_cv, cv2.COLOR_BGR2YUV)
         img_yuv[:,:,0] = cv2.equalizeHist(img_yuv[:,:,0])
         Va.img_cv = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
+        print(1)
     else:
-        Va.img_cv = cv2.equalizeHist(Va.img_cv)
-
-    update_image()
-    Va.in_operation = False
+        img = cv2.equalizeHist(Va.img_cv)
+        #cv2.imshow('img_cmp',img - Va.img_cv) 
+        Va.img_cv = img.copy()
+        update_image()
+        Va.in_operation = False
 
 def local_histogram_equalization(block_size):
     if Va.img_cv is None:
