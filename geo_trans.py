@@ -69,7 +69,10 @@ def rotate_image_show(angle):
         center = (width // 2, height // 2)
         rotation_matrix = cv2.getRotationMatrix2D(center, Va.rotation_angle, 1)
         img_cv = cv2.warpAffine(Va.img_cv, rotation_matrix, (width, height))
-        update_image()
+        Va.img = Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
+        Va.img_tk = ImageTk.PhotoImage(Va.img)
+        canvas.delete("image")
+        canvas.create_image(Va.curX, Va.curY, anchor=tk.NW, image=Va.img_tk, tags="image")
 
 
 def rotate_image_confirm(rotation_window, angle):
