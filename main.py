@@ -16,19 +16,19 @@ import histogram_equalization
 import edge_detection
 import morphology
 
-def on_canvas_click(event):
-    if Va.drawing is True:
+def on_canvas_click(event): #点击鼠标事件
+    if Va.drawing is True:          #如果是画图状态，记录画笔相对于图象左上角的位置
         Va.drawing_x = event.x - Va.curX
         Va.drawing_y = event.y - Va.curY
-    else:
+    else:   #如果是拖拽状态，记录点击位置相对于画布左上角的位置
         canvas.start_drag_x = event.x
         canvas.start_drag_y = event.y
-    update_status_bar(event.x, event.y)
+    update_status_bar(event.x, event.y) #实时更新状态栏
 
 
 
-def on_canvas_release(event):
-    if Va.drawing is True:
+def on_canvas_release(event): #释放鼠标事件
+    if Va.drawing is True:  #画图状态，根据类型调用相应函数进行绘画
         Va.drawing = False
         if Va.drawing_type == "rectangle":
             draw.draw_opencv_rectangle(
@@ -62,15 +62,15 @@ def on_canvas_release(event):
             )
         elif Va.drawing_type == "text":
             draw.draw_opencv_text(event.x - Va.curX, event.y - Va.curY, Va.img_cv)
-        elif Va.drawing_type == "cut":
+        elif Va.drawing_type == "cut":  #裁剪
             geo_trans.cut_img(Va.drawing_x, Va.drawing_y, event.x - Va.curX, event.y - Va.curY)
             
 
 
 def on_canvas_drag(event):
-    if Va.drawing is True:
+    if Va.drawing is True:  #如果是画图状态，实时更新当前图象状态
         if Va.drawing_type == "rectangle":
-            temp_img_cv = Va.img_cv.copy()
+            temp_img_cv = Va.img_cv.copy()  #使用临时图象展示
             draw.draw_opencv_rectangle(
                 Va.drawing_x,
                 Va.drawing_y,
@@ -111,7 +111,7 @@ def on_canvas_drag(event):
                 event.y - Va.curY,
                 temp_img_cv,
             )
-    else:
+    else:#不是画图状态，说明是拖曳状态，更新图象位置，更新状态栏
         delta_x = event.x - canvas.start_drag_x
         delta_y = event.y - canvas.start_drag_y
         Va.curX += delta_x
@@ -122,8 +122,8 @@ def on_canvas_drag(event):
         update_status_bar(event.x, event.y)
 
 
-def on_canvas_move(event):
-    update_status_bar(event.x, event.y)
+def on_canvas_move(event):#移动鼠标
+    update_status_bar(event.x, event.y) #更新状态栏
 
 
 def processWheel(event):
